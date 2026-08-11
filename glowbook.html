@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlowBook — Book beauty & wellness, anywhere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,450;9..144,560;9..144,650;9..144,780&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --ink:#241016;
+  --paper:#FBF6EF;
+  --paper-2:#F5EDE0;
+  --maroon:#7A2138;
+  --maroon-dark:#4E1524;
+  --maroon-tint:#F3E3E6;
+  --gold:#C9973F;
+  --gold-light:#E9C77E;
+  --sage:#5F7A5E;
+  --sage-tint:#E7EEE4;
+  --line:#E4D9C8;
+  --white:#FFFDF9;
+  --muted:#8A7B6C;
+  --danger:#B3462C;
+  --danger-tint:#F6E3DC;
+  --radius:16px;
+  --radius-sm:9px;
+  --shadow:0 10px 32px rgba(36,16,22,0.09);
+  --shadow-lg:0 20px 60px rgba(36,16,22,0.16);
+  --font-display:'Fraunces',serif;
+  --font-body:'Inter',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-body);
+  background:var(--paper);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
+input,select{font-family:inherit;}
+img{max-width:100%;display:block;}
+:focus-visible{outline:2.5px solid var(--gold);outline-offset:2px;}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+
+.view{display:none;}
+.view.active{display:block;animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:11.5px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--maroon);
+  display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:'';width:16px;height:1px;background:var(--maroon);}
+
+h1,h2,h3{font-family:var(--font-display);font-weight:560;letter-spacing:-.01em;color:var(--ink);}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 22px;border-radius:999px;border:1.5px solid transparent;
+  font-weight:600;font-size:14.5px;transition:all .18s ease;white-space:nowrap;
+}
+.btn-primary{background:var(--maroon);color:var(--white);}
+.btn-primary:hover{background:var(--maroon-dark);transform:translateY(-1px);}
+.btn-gold{background:var(--gold);color:var(--maroon-dark);}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-1px);}
+.btn-outline{background:transparent;border-color:var(--ink);color:var(--ink);}
+.btn-outline:hover{background:var(--ink);color:var(--white);}
+.btn-ghost{background:transparent;color:var(--maroon);padding:10px 14px;}
+.btn-ghost:hover{background:var(--maroon-tint);}
+.btn-sm{padding:8px 14px;font-size:13px;}
+.btn-block{width:100%;}
+.btn[disabled]{opacity:.45;pointer-events:none;}
+.btn-danger{background:var(--danger);color:var(--white);}
+.btn-danger:hover{opacity:.88;}
+
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);}
+.badge{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;
+  padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;
+  text-transform:uppercase;font-weight:500;
+}
+.badge-gold{background:var(--gold-light);color:var(--maroon-dark);}
+.badge-sage{background:var(--sage-tint);color:var(--sage);}
+.badge-maroon{background:var(--maroon-tint);color:var(--maroon);}
+.badge-danger{background:var(--danger-tint);color:var(--danger);}
+.badge-muted{background:var(--paper-2);color:var(--muted);}
+
+/* ============ TOP NAV (customer) ============ */
+.topnav{
+  position:sticky;top:0;z-index:60;background:rgba(251,246,239,.92);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+}
+.topnav-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;max-width:1180px;margin:0 auto;}
+.logo{font-family:var(--font-display);font-size:22px;font-weight:650;display:flex;align-items:center;gap:8px;}
+.logo .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);}
+.nav-links{display:flex;gap:28px;align-items:center;font-size:14px;font-weight:500;}
+.nav-links a{opacity:.75;transition:opacity .15s;}
+.nav-links a:hover{opacity:1;}
+.nav-actions{display:flex;gap:10px;align-items:center;}
+
+/* ============ HERO ============ */
+.hero{padding:76px 0 40px;position:relative;overflow:hidden;}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;}
+.hero h1{font-size:52px;line-height:1.04;margin:18px 0 20px;}
+.hero h1 em{font-style:italic;color:var(--maroon);}
+.hero p.lead{font-size:17px;color:var(--muted);max-width:440px;margin-bottom:30px;line-height:1.55;}
+.search-bar{
+  display:flex;background:var(--white);border:1.5px solid var(--ink);border-radius:999px;
+  padding:6px;gap:6px;box-shadow:var(--shadow);max-width:520px;
+}
+.search-bar input{border:none;background:none;padding:12px 16px;flex:1;font-size:14.5px;}
+.search-bar input:focus{outline:none;}
+.chips{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+.chip{
+  padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--white);
+  font-size:13.5px;font-weight:500;transition:all .15s;
+}
+.chip:hover{border-color:var(--maroon);color:var(--maroon);}
+
+/* Signature: slot-grid decorative pattern */
+.slotviz{
+  position:relative;border-radius:20px;overflow:hidden;background:var(--maroon);
+  padding:26px;box-shadow:var(--shadow-lg);
+}
+.slotviz-head{display:flex;justify-content:space-between;align-items:baseline;color:var(--white);margin-bottom:16px;}
+.slotviz-head .t{font-family:var(--font-display);font-size:19px;}
+.slotviz-head .s{font-family:var(--font-mono);font-size:11px;color:var(--gold-light);letter-spacing:.06em;}
+.slotgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.slotcell{
+  aspect-ratio:1.5;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:12px;color:var(--white);
+}
+.slotcell.open{background:rgba(255,255,255,.12);border:1px dashed rgba(255,255,255,.35);}
+.slotcell.taken{background:rgba(255,255,255,.06);color:rgba(255,255,255,.35);text-decoration:line-through;}
+.slotcell.pick{background:var(--gold);color:var(--maroon-dark);font-weight:700;}
+.slotviz-foot{margin-top:14px;color:rgba(255,255,255,.7);font-size:12.5px;font-family:var(--font-mono);}
+
+/* ============ GENERIC SECTIONS ============ */
+.section{padding:64px 0;}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:30px;gap:20px;}
+.section-head h2{font-size:32px;}
+.section-head p{color:var(--muted);font-size:14.5px;margin-top:6px;}
+
+.cat-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
+.cat-card{
+  background:var(--white);border:1px solid var(--line);border-radius:var(--radius-sm);
+  padding:18px 14px;text-align:center;transition:all .15s;
+}
+.cat-card:hover{border-color:var(--maroon);transform:translateY(-3px);box-shadow:var(--shadow);}
+.cat-card .ic{font-size:22px;margin-bottom:8px;}
+.cat-card .lb{font-size:13px;font-weight:600;}
+
+.salon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.salon-card{overflow:hidden;transition:all .2s;cursor:pointer;}
+.salon-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px);}
+.salon-img{height:150px;background:linear-gradient(135deg,var(--maroon-tint),var(--gold-light));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:15px;color:var(--maroon);position:relative;}
+.salon-img .fav{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.85);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.salon-body{padding:16px 18px 20px;}
+.salon-body .row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.salon-body .name{font-family:var(--font-display);font-size:17px;font-weight:560;}
+.salon-body .rating{font-family:var(--font-mono);font-size:12.5px;color:var(--sage);font-weight:500;}
+.salon-body .meta{font-size:13px;color:var(--muted);margin-bottom:10px;}
+.salon-body .price{font-size:13px;font-weight:600;color:var(--maroon);}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+.loop-list{display:flex;flex-direction:column;gap:0;}
+.loop-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line);}
+.loop-item:last-child{border-bottom:none;}
+.loop-num{font-family:var(--font-mono);font-size:12px;color:var(--gold);width:26px;flex-shrink:0;padding-top:3px;}
+.loop-item h3{font-size:15.5px;margin-bottom:3px;}
+.loop-item p{font-size:13.5px;color:var(--muted);line-height:1.5;}
+
+.footer{background:var(--ink);color:var(--paper-2);padding:50px 0 26px;margin-top:40px;}
+.footer .wrap{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:30px;}
+.footer .logo{color:var(--paper);}
+.footer-cols{display:flex;gap:60px;}
+.footer-col h4{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-light);margin-bottom:14px;font-weight:600;}
+.footer-col a{display:block;font-size:13.5px;color:rgba(251,246,239,.65);margin-bottom:9px;}
+.footer-bottom{border-top:1px solid rgba(251,246,239,.12);margin-top:36px;padding-top:20px;font-size:12px;color:rgba(251,246,239,.4);text-align:center;font-family:var(--font-mono);}
+
+/* ============ DEMO SWITCHER ============ */
+.demobar{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:200;
+  background:var(--ink);color:var(--paper);border-radius:999px;padding:8px;
+  display:flex;gap:4px;box-shadow:var(--shadow-lg);align-items:center;
+}
+.demobar span{font-family:var(--font-mono);font-size:10.5px;color:var(--gold-light);padding:0 10px;letter-spacing:.05em;text-transform:uppercase;}
+.demobar button{
+  background:none;border:none;color:rgba(251,246,239,.7);font-size:12.5px;padding:9px 14px;
+  border-radius:999px;font-weight:500;transition:all .15s;
+}
+.demobar button:hover{background:rgba(251,246,239,.1);color:var(--paper);}
+.demobar button.on{background:var(--gold);color:var(--maroon-dark);}
+
+/* ============ AUTH ============ */
+.authwrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;background:
+  radial-gradient(circle at 20% 20%, var(--maroon-tint), transparent 45%),
+  radial-gradient(circle at 80% 80%, var(--sage-tint), transparent 45%), var(--paper);}
+.authcard{width:100%;max-width:420px;background:var(--white);border:1px solid var(--line);border-radius:20px;padding:40px 36px;box-shadow:var(--shadow-lg);}
+.roletabs{display:flex;gap:6px;background:var(--paper-2);padding:5px;border-radius:999px;margin-bottom:28px;}
+.roletabs button{flex:1;padding:9px 8px;border:none;background:none;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--muted);transition:all .15s;}
+.roletabs button.active{background:var(--maroon);color:var(--white);}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:7px;color:var(--ink);}
+.field input,.field select{
+  width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:14.5px;
+  background:var(--paper);transition:border-color .15s;
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--maroon);}
+.otp-row{display:flex;gap:8px;}
+.otp-row input{text-align:center;font-family:var(--font-mono);font-size:18px;padding:12px 0;width:100%;}
+.hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;}
+.divider-x{display:flex;align-items:center;gap:12px;margin:22px 0;color:var(--muted);font-size:12px;}
+.divider-x::before,.divider-x::after{content:'';flex:1;height:1px;background:var(--line);}
+
+/* ============ APP SHELL (salon/admin) ============ */
+.appshell{display:grid;grid-template-columns:250px 1fr;min-height:100vh;}
+.sidebar{background:var(--ink);color:var(--paper);padding:26px 18px;display:flex;flex-direction:column;}
+.sidebar .logo{color:var(--paper);margin-bottom:6px;padding:0 10px;}
+.sidebar .who{font-size:12px;color:rgba(251,246,239,.5);padding:0 10px 26px;font-family:var(--font-mono);}
+.sidenav{display:flex;flex-direction:column;gap:3px;flex:1;}
+.sidenav button{
+  display:flex;align-items:center;gap:11px;text-align:left;padding:11px 12px;border-radius:10px;
+  background:none;border:none;color:rgba(251,246,239,.68);font-size:13.5px;font-weight:500;transition:all .15s;
+}
+.sidenav button .ic{width:18px;text-align:center;font-size:14px;}
+.sidenav button:hover{background:rgba(251,246,239,.06);color:var(--paper);}
+.sidenav button.active{background:var(--maroon);color:var(--paper);}
+.sidebar-foot{padding-top:16px;border-top:1px solid rgba(251,246,239,.12);}
+.sidebar-foot button{width:100%;}
+
+.mainpane{padding:32px 40px;overflow-y:auto;max-height:100vh;}
+.pane-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px;flex-wrap:wrap;gap:12px;}
+.pane-head h2{font-size:26px;}
+.pane-head p{color:var(--muted);font-size:13.5px;margin-top:4px;}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px;}
+.kpi{padding:20px;}
+.kpi .lb{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:10px;}
+.kpi .val{font-family:var(--font-display);font-size:28px;font-weight:650;}
+.kpi .delta{font-size:12px;margin-top:6px;font-weight:600;}
+.kpi .delta.up{color:var(--sage);}
+.kpi .delta.down{color:var(--danger);}
+
+table{width:100%;border-collapse:collapse;}
+.tblcard{overflow:hidden;}
+th{
+  text-align:left;font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--muted);padding:13px 16px;background:var(--paper-2);border-bottom:1px solid var(--line);font-weight:500;
+}
+td{padding:14px 16px;border-bottom:1px solid var(--line);font-size:13.5px;}
+tr:last-child td{border-bottom:none;}
+tr.tr-hover:hover{background:var(--paper-2);}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--maroon-tint);color:var(--maroon);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--font-mono);}
+
+.tabbar{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:22px;}
+.tabbar button{padding:11px 4px;margin-right:22px;background:none;border:none;font-size:13.5px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;}
+.tabbar button.active{color:var(--maroon);border-color:var(--maroon);}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+
+.today-item{display:flex;align-items:center;gap:14px;padding:15px 18px;}
+.today-item .time{font-family:var(--font-mono);font-size:13px;color:var(--maroon);width:64px;flex-shrink:0;font-weight:600;}
+.today-item .info{flex:1;}
+.today-item .info .svc{font-weight:600;font-size:14px;}
+.today-item .info .sub{font-size:12.5px;color:var(--muted);margin-top:2px;}
+.today-item .actions{display:flex;gap:8px;}
+
+.settings-block{padding:24px;margin-bottom:16px;}
+.settings-block h3{font-size:16px;margin-bottom:16px;}
+
+.pill-toggle{display:inline-flex;background:var(--paper-2);border-radius:999px;padding:4px;}
+.pill-toggle button{padding:7px 14px;border:none;background:none;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--muted);}
+.pill-toggle button.active{background:var(--white);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1);}
+
+/* ============ BOOKING WIZARD ============ */
+.wizard-wrap{max-width:760px;margin:0 auto;padding:48px 28px 100px;}
+.steps{display:flex;justify-content:space-between;margin-bottom:40px;position:relative;}
+.steps::before{content:'';position:absolute;top:13px;left:0;right:0;height:1px;background:var(--line);z-index:0;}
+.step{display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:1;background:var(--paper);padding:0 6px;}
+.step .dot{width:26px;height:26px;border-radius:50%;background:var(--white);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;color:var(--muted);}
+.step.done .dot{background:var(--sage);border-color:var(--sage);color:var(--white);}
+.step.now .dot{background:var(--maroon);border-color:var(--maroon);color:var(--white);}
+.step .lb{font-size:11px;color:var(--muted);font-weight:500;}
+.step.now .lb{color:var(--ink);font-weight:700;}
+
+.wizard-panel{padding:32px;margin-bottom:24px;}
+.svc-pick{display:flex;justify-content:space-between;align-items:center;padding:16px;border:1.5px solid var(--line);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all .15s;}
+.svc-pick:hover{border-color:var(--maroon);}
+.svc-pick.sel{border-color:var(--maroon);background:var(--maroon-tint);}
+.svc-pick .l h4{font-size:14.5px;margin-bottom:3px;}
+.svc-pick .l p{font-size:12.5px;color:var(--muted);}
+.svc-pick .r{font-family:var(--font-mono);font-weight:600;color:var(--maroon);}
+
+.staff-row{display:flex;gap:12px;flex-wrap:wrap;}
+.staff-pick{padding:14px 18px;border:1.5px solid var(--line);border-radius:12px;text-align:center;cursor:pointer;min-width:96px;}
+.staff-pick .av{width:40px;height:40px;border-radius:50%;background:var(--gold-light);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:var(--font-mono);color:var(--maroon-dark);font-size:13px;}
+.staff-pick.sel{border-color:var(--maroon);background:var(--maroon-tint);}
+.staff-pick p{font-size:12.5px;font-weight:600;}
+
+.dategrid{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:20px;}
+.datecell{flex-shrink:0;width:58px;padding:10px 0;text-align:center;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;}
+.datecell .d{font-size:11px;color:var(--muted);}
+.datecell .n{font-family:var(--font-display);font-size:17px;font-weight:650;margin-top:2px;}
+.datecell.sel{border-color:var(--maroon);background:var(--maroon);color:var(--white);}
+.datecell.sel .d{color:rgba(255,255,255,.7);}
+
+.timegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
+.timecell{padding:11px 0;text-align:center;border:1.5px solid var(--line);border-radius:10px;font-family:var(--font-mono);font-size:13px;cursor:pointer;}
+.timecell:hover{border-color:var(--maroon);}
+.timecell.sel{background:var(--maroon);border-color:var(--maroon);color:var(--white);font-weight:600;}
+.timecell.taken{background:var(--paper-2);color:var(--line);text-decoration:line-through;pointer-events:none;border-style:dashed;}
+
+.summary-box{padding:20px;background:var(--paper-2);border-radius:12px;margin-top:20px;}
+.summary-row{display:flex;justify-content:space-between;font-size:13.5px;padding:6px 0;}
+.summary-row.total{border-top:1px solid var(--line);margin-top:8px;padding-top:12px;font-weight:700;font-size:15px;}
+.wizard-nav{display:flex;justify-content:space-between;}
+
+.confirm-box{text-align:center;padding:56px 32px;}
+.confirm-icon{width:64px;height:64px;border-radius:50%;background:var(--sage);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px;}
+.confirm-id{font-family:var(--font-mono);background:var(--paper-2);display:inline-block;padding:8px 18px;border-radius:999px;font-size:13px;margin:16px 0 26px;letter-spacing:.03em;}
+
+@media(max-width:980px){
+  .hero-grid,.split{grid-template-columns:1fr;}
+  .salon-grid{grid-template-columns:repeat(2,1fr);}
+  .cat-row{grid-template-columns:repeat(3,1fr);}
+  .appshell{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .kpi-row,.grid3{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:640px){
+  .nav-links{display:none;}
+  .hero h1{font-size:34px;}
+  .salon-grid,.cat-row,.kpi-row,.grid2,.grid3,.timegrid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- VIEW: CUSTOMER HOME -->
+<!-- ============================================================ -->
+<div class="view active" id="view-home">
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <div class="logo"><span class="dot"></span>GlowBook</div>
+      <div class="nav-links">
+        <a href="#" onclick="showView('view-search');return false;">Explore</a>
+        <a href="#" onclick="showView('view-search');return false;">Salons near you</a>
+        <a href="#" onclick="showView('view-customer-dash');return false;">My bookings</a>
+      </div>
+      <div class="nav-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openAuth('salon')">List your salon</button>
+        <button class="btn btn-primary btn-sm" onclick="openAuth('customer')">Log in</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Navi Mumbai · Mumbai · Pune</div>
+        <h1>Find your <em>next glow</em>,<br>booked in under a minute.</h1>
+        <p class="lead">Search real-time availability at verified salons and spas nearby, pick your stylist, and pay online — no phone calls, no waiting.</p>
+        <div class="search-bar">
+          <input type="text" placeholder="Try 'hair spa' or 'bridal makeup'" id="homeSearchInput">
+          <button class="btn btn-gold" onclick="doHomeSearch()">Search</button>
+        </div>
+        <div class="chips">
+          <span class="chip" onclick="quickSearch('Haircut')">Haircut</span>
+          <span class="chip" onclick="quickSearch('Facial')">Facial</span>
+          <span class="chip" onclick="quickSearch('Spa')">Spa</span>
+          <span class="chip" onclick="quickSearch('Nails')">Nails</span>
+          <span class="chip" onclick="quickSearch('Bridal Makeup')">Makeup</span>
+        </div>
+      </div>
+      <div class="slotviz">
+        <div class="slotviz-head">
+          <div class="t">Live availability</div>
+          <div class="s">XYZ BEAUTY · TODAY</div>
+        </div>
+        <div class="slotgrid" id="heroSlotGrid"></div>
+        <div class="slotviz-foot">Slots update the instant a stylist is booked — never double-booked.</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head"><h2>What are you booking today?</h2></div>
+      <div class="cat-row" id="catRow"></div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2>Popular near you</h2>
+          <p>Top-rated salons open right now</p>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="showView('view-search')">View all →</button>
+      </div>
+      <div class="salon-grid" id="homeSalonGrid"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split">
+      <div>
+        <div class="eyebrow">How it works</div>
+        <h2 style="font-size:30px;margin:12px 0 22px;">From discovery to done — <em style="color:var(--maroon);font-style:italic;">one loop.</em></h2>
+        <div class="loop-list">
+          <div class="loop-item"><div class="loop-num">01</div><div><h3>Search & compare</h3><p>Filter by distance, rating, price and today's openings.</p></div></div>
+          <div class="loop-item"><div class="loop-num">02</div><div><h3>Book & pay online</h3><p>Pick a service, stylist and slot. Pay securely, get confirmed instantly.</p></div></div>
+          <div class="loop-item"><div class="loop-num">03</div><div><h3>Visit & check in</h3><p>The salon checks you in and marks the service complete.</p></div></div>
+          <div class="loop-item"><div class="loop-num">04</div><div><h3>Rate your visit</h3><p>Leave a review, earn perks, get reminded for your next one.</p></div></div>
+        </div>
+      </div>
+      <div class="card" style="padding:34px;background:var(--maroon);color:var(--white);">
+        <div class="eyebrow" style="color:var(--gold-light);">For salon owners</div>
+        <h2 style="color:var(--white);font-size:26px;margin:14px 0 12px;">Fill every chair, automatically.</h2>
+        <p style="color:rgba(255,253,249,.75);font-size:14.5px;line-height:1.6;margin-bottom:24px;">List your services, manage staff availability, and get paid out on schedule — GlowBook handles discovery, booking and reminders for you.</p>
+        <button class="btn btn-gold" onclick="openAuth('salon')">Partner with GlowBook →</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div style="max-width:260px;">
+        <div class="logo"><span class="dot"></span>GlowBook</div>
+        <p style="color:rgba(251,246,239,.55);font-size:13px;margin-top:14px;line-height:1.6;">The easiest way to discover and book beauty & wellness appointments near you.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col"><h4>Customers</h4><a href="#" onclick="showView('view-search');return false;">Explore salons</a><a href="#" onclick="showView('view-customer-dash');return false;">My bookings</a><a href="#" onclick="openAuth('customer');return false;">Log in</a></div>
+        <div class="footer-col"><h4>Salons</h4><a href="#" onclick="openAuth('salon');return false;">Partner login</a><a href="#" onclick="showView('view-salon-dash');return false;">Dashboard</a></div>
+        <div class="footer-col"><h4>Company</h4><a href="#" onclick="openAuth('admin');return false;">Admin panel</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom">GLOWBOOK PROTOTYPE · MUMBAI, IN</div>
+  </footer>
+</div>
+
+<!-- ============================================================ -->
+<!-- VIEW: SEARCH RESULTS -->
+<!-- ============================================================ -->
+<div class="view" id="view-search">
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <div class="logo" style="cursor:pointer" onclick="showView('view-home')"><span class="dot"></span>GlowBook</div>
+      <div class="search-bar" style="flex:1;max-width:460px;margin:0 24px;">
+        <input type="text" id="searchPageInput" placeholder="Search service or salon">
+        <button class="btn btn-gold btn-sm" onclick="runSearch()">Search</button>
+      </div>
+      <div class="nav-actions"><button class="btn btn-primary btn-sm" onclick="openAuth('customer')">Log in</button></div>
+    </div>
+  </nav>
+  <div class="wrap" style="padding-top:28px;">
+    <div class="eyebrow">📍 Navi Mumbai · Today</div>
+    <div class="section-head" style="margin-top:10px;">
+      <h2 id="searchResultsTitle" style="font-size:26px;">All salons</h2>
+      <div class="pill-toggle">
+        <button class="active" data-sort="rating" onclick="setSort(this,'rating')">Top rated</button>
+        <button data-sort="price" onclick="setSort(this,'price')">Price</button>
+        <button data-sort="distance" onclick="setSort(this,'distance')">Nearest</button>
+      </div>
+    </div>
+    <div class="salon-grid" id="searchGrid" style="margin-bottom:60px;"></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VIEW: SALON PROFILE -->
+<!-- ============================================================ -->
+<div class="view" id="view-salon-profile">
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <div class="logo" style="cursor:pointer" onclick="showView('view-home')"><span class="dot"></span>GlowBook</div>
+      <button class="btn btn-ghost btn-sm" onclick="showView('view-search')">← Back to search</button>
+    </div>
+  </nav>
+  <div class="wrap" style="padding-top:32px;padding-bottom:60px;">
+    <div class="salon-img" style="height:220px;border-radius:16px;margin-bottom:24px;font-size:20px;" id="profileHero">XYZ Beauty Salon</div>
+    <div class="split" style="grid-template-columns:1.6fr 1fr;align-items:start;gap:36px;">
+      <div>
+        <h2 id="profileName" style="font-size:30px;">XYZ Beauty Salon</h2>
+        <div style="display:flex;gap:16px;align-items:center;margin:10px 0 22px;flex-wrap:wrap;">
+          <span class="badge badge-gold" id="profileRating">⭐ 4.8 (342 reviews)</span>
+          <span style="font-size:13.5px;color:var(--muted);" id="profileLoc">📍 Airoli, Navi Mumbai</span>
+          <span class="badge badge-sage">Open · 10:00 AM – 9:00 PM</span>
+        </div>
+        <div class="tabbar">
+          <button class="active" onclick="setProfileTab(this,'services')">Services</button>
+          <button onclick="setProfileTab(this,'reviews')">Reviews</button>
+          <button onclick="setProfileTab(this,'about')">About</button>
+        </div>
+        <div id="profileServices"></div>
+        <div id="profileReviews" style="display:none;"></div>
+        <div id="profileAbout" style="display:none;">
+          <p style="color:var(--muted);font-size:14px;line-height:1.7;">A full-service salon offering hair, skin and bridal care with certified stylists. Verified by GlowBook — hygiene checked, staff background-verified.</p>
+        </div>
+      </div>
+      <div class="card" style="padding:24px;position:sticky;top:90px;">
+        <h3 style="font-size:16px;margin-bottom:14px;">Book your visit</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Select a service to see live openings today.</p>
+        <button class="btn btn-primary btn-block" onclick="startBooking()">Book now →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VIEW: BOOKING WIZARD -->
+<!-- ============================================================ -->
+<div class="view" id="view-booking">
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <div class="logo" style="cursor:pointer" onclick="showView('view-home')"><span class="dot"></span>GlowBook</div>
+      <button class="btn btn-ghost btn-sm" onclick="showView('view-salon-profile')">✕ Cancel</button>
+    </div>
+  </nav>
+  <div class="wizard-wrap">
+    <div class="steps" id="wizSteps"></div>
+
+    <div class="wizard-panel card" id="wizStep-service">
+      <h3 style="margin-bottom:16px;">Choose a service</h3>
+      <div id="wizServiceList"></div>
+    </div>
+
+    <div class="wizard-panel card" id="wizStep-staff" style="display:none;">
+      <h3 style="margin-bottom:16px;">Choose a stylist</h3>
+      <div class="staff-row" id="wizStaffList"></div>
+    </div>
+
+    <div class="wizard-panel card" id="wizStep-time" style="display:none;">
+      <h3 style="margin-bottom:16px;">Pick date & time</h3>
+      <div class="dategrid" id="wizDateGrid"></div>
+      <div class="timegrid" id="wizTimeGrid"></div>
+    </div>
+
+    <div class="wizard-panel card" id="wizStep-details" style="display:none;">
+      <h3 style="margin-bottom:16px;">Your details</h3>
+      <div class="field"><label>Full name</label><input id="custName" placeholder="Ashutosh Rao"></div>
+      <div class="field"><label>Mobile number</label><input id="custMobile" placeholder="98XXXXXX21" maxlength="10"></div>
+      <div class="summary-box" id="wizSummary"></div>
+    </div>
+
+    <div class="wizard-panel card" id="wizStep-payment" style="display:none;">
+      <h3 style="margin-bottom:16px;">Payment</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Mock checkout — GlowBook integrates with Razorpay / Stripe in production.</p>
+      <div class="field"><label>Card number</label><input placeholder="4242 4242 4242 4242"></div>
+      <div class="grid2">
+        <div class="field"><label>Expiry</label><input placeholder="MM/YY"></div>
+        <div class="field"><label>CVV</label><input placeholder="123"></div>
+      </div>
+      <div class="summary-box" id="wizPaySummary"></div>
+    </div>
+
+    <div class="wizard-nav">
+      <button class="btn btn-outline" id="wizBackBtn" onclick="wizBack()">← Back</button>
+      <button class="btn btn-primary" id="wizNextBtn" onclick="wizNext()">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VIEW: CONFIRMATION -->
+<!-- ============================================================ -->
+<div class="view" id="view-confirmation">
+  <div class="wizard-wrap">
+    <div class="card confirm-box">
+      <div class="confirm-icon">✓</div>
+      <h2 style="font-size:26px;">Booking confirmed</h2>
+      <p style="color:var(--muted);margin-top:8px;" id="confSalon">XYZ Beauty Salon</p>
+      <div class="confirm-id" id="confId">GB-28473</div>
+      <div class="summary-box" style="text-align:left;max-width:340px;margin:0 auto 26px;" id="confDetails"></div>
+      <p style="font-size:12.5px;color:var(--muted);margin-bottom:26px;">Confirmation sent via Email, WhatsApp and SMS.</p>
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <button class="btn btn-outline" onclick="showView('view-customer-dash');renderCustomerDash();">View booking</button>
+        <button class="btn btn-primary" onclick="showView('view-home')">Back to home</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VIEW: LOGIN (all roles) -->
+<!-- ============================================================ -->
+<div class="view" id="view-login">
+  <div class="authwrap">
+    <div class="authcard">
+      <div class="logo" style="margin-bottom:22px;justify-content:center;display:flex;"><span class="dot"></span>GlowBook</div>
+      <div class="roletabs">
+        <button id="tab-customer" onclick="setAuthRole('customer')">Customer</button>
+        <button id="tab-salon" onclick="setAuthRole('salon')">Salon partner</button>
+        <button id="tab-admin" onclick="setAuthRole('admin')">Admin</button>
+      </div>
+
+      <div id="authStep1">
+        <h3 style="font-size:19px;margin-bottom:6px;" id="authTitle">Log in as a customer</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:22px;" id="authSub">Enter your mobile number to receive an OTP.</p>
+        <div class="field"><label id="authFieldLabel">Mobile number</label><input id="authIdentifier" placeholder="98XXXXXX21"></div>
+        <button class="btn btn-primary btn-block" onclick="sendOtp()">Send OTP →</button>
+        <div class="divider-x">or</div>
+        <button class="btn btn-outline btn-block" onclick="sendOtp()">Continue with Google</button>
+      </div>
+
+      <div id="authStep2" style="display:none;">
+        <h3 style="font-size:19px;margin-bottom:6px;">Enter OTP</h3>
+        <p class="hint" style="margin-bottom:18px;" id="otpSentTo">Sent a 4-digit code to your number.</p>
+        <div class="otp-row">
+          <input maxlength="1"><input maxlength="1"><input maxlength="1"><input maxlength="1">
+        </div>
+        <p class="hint">Prototype: any 4 digits work.</p>
+        <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="verifyOtp()">Verify & continue →</button>
+        <button class="btn btn-ghost btn-block" onclick="backToStep1()">← Change number</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VIEW: CUSTOMER DASHBOARD -->
+<!-- ============================================================ -->
+<div class="view" id="view-customer-dash">
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <div class="logo" style="cursor:pointer" onclick="showView('view-home')"><span class="dot"></span>GlowBook</div>
+      <div class="nav-links"><a href="#" onclick="showView('view-search');return false;">Explore</a></div>
+      <div class="nav-actions"><button class="btn btn-outline btn-sm" onclick="logout()">Log out</button></div>
+    </div>
+  </nav>
+  <div class="wrap" style="padding-top:32px;padding-bottom:60px;">
+    <div class="section-head"><h2 style="font-size:26px;">My bookings</h2></div>
+    <div class="tabbar">
+      <button class="active" onclick="setMyBookingsTab(this,'upcoming')">Upcoming</button>
+      <button onclick="setMyBookingsTab(this,'past')">Past</button>
+    </div>
+    <div id="myBookingsList"></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VIEW: SALON DASHBOARD -->
+<!-- ============================================================ -->
+<div class="view" id="view-salon-dash">
+  <div class="appshell">
+    <aside class="sidebar">
+      <div class="logo"><span class="dot"></span>GlowBook</div>
+      <div class="who">SALON PARTNER · XYZ Beauty</div>
+      <nav class="sidenav" id="salonNav">
+        <button class="active" data-pane="sd-today" onclick="setSalonPane(this,'sd-today')"><span class="ic">📅</span>Today</button>
+        <button data-pane="sd-bookings" onclick="setSalonPane(this,'sd-bookings')"><span class="ic">🗂</span>All bookings</button>
+        <button data-pane="sd-services" onclick="setSalonPane(this,'sd-services')"><span class="ic">💇</span>Services</button>
+        <button data-pane="sd-staff" onclick="setSalonPane(this,'sd-staff')"><span class="ic">👥</span>Staff</button>
+        <button data-pane="sd-payouts" onclick="setSalonPane(this,'sd-payouts')"><span class="ic">💳</span>Payouts</button>
+        <button data-pane="sd-settings" onclick="setSalonPane(this,'sd-settings')"><span class="ic">⚙️</span>Settings</button>
+      </nav>
+      <div class="sidebar-foot"><button class="btn btn-outline btn-sm btn-block" style="color:var(--paper);border-color:rgba(251,246,239,.3);" onclick="logout()">Log out</button></div>
+    </aside>
+    <main class="mainpane">
+
+      <section id="sd-today">
+        <div class="pane-head"><div><h2>Today's bookings</h2><p id="todayDateLabel">Tuesday, 11 August</p></div><span class="badge badge-sage">4 appointments</span></div>
+        <div class="kpi-row">
+          <div class="card kpi"><div class="lb">Today's bookings</div><div class="val">4</div><div class="delta up">↑ 1 vs yesterday</div></div>
+          <div class="card kpi"><div class="lb">Gross today</div><div class="val">₹3,596</div><div class="delta up">↑ 12%</div></div>
+          <div class="card kpi"><div class="lb">Avg rating</div><div class="val">4.8</div><div class="delta up">↑ 0.1</div></div>
+          <div class="card kpi"><div class="lb">No-shows (30d)</div><div class="val">2</div><div class="delta down">↓ 1</div></div>
+        </div>
+        <div class="card tblcard" id="todayList"></div>
+      </section>
+
+      <section id="sd-bookings" style="display:none;">
+        <div class="pane-head"><h2>All bookings</h2></div>
+        <div class="card tblcard">
+          <table>
+            <thead><tr><th>Booking ID</th><th>Customer</th><th>Service</th><th>Staff</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody id="allBookingsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="sd-services" style="display:none;">
+        <div class="pane-head"><h2>Services</h2><button class="btn btn-primary btn-sm">+ Add service</button></div>
+        <div class="card tblcard">
+          <table>
+            <thead><tr><th>Service</th><th>Duration</th><th>Price</th><th>Status</th><th></th></tr></thead>
+            <tbody id="servicesBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="sd-staff" style="display:none;">
+        <div class="pane-head"><h2>Staff</h2><button class="btn btn-primary btn-sm">+ Add staff</button></div>
+        <div class="grid3" id="staffCards"></div>
+      </section>
+
+      <section id="sd-payouts" style="display:none;">
+        <div class="pane-head"><h2>Payouts</h2><p>Cycle: 1–15 Aug 2026</p></div>
+        <div class="kpi-row">
+          <div class="card kpi"><div class="lb">Bookings completed</div><div class="val">42</div></div>
+          <div class="card kpi"><div class="lb">Gross booking value</div><div class="val">₹38,500</div></div>
+          <div class="card kpi"><div class="lb">Platform commission</div><div class="val">₹3,850</div></div>
+          <div class="card kpi"><div class="lb">Payable to you</div><div class="val" style="color:var(--sage);">₹34,150</div></div>
+        </div>
+        <div class="card tblcard">
+          <table>
+            <thead><tr><th>Cycle</th><th>Gross</th><th>Commission</th><th>Refunds</th><th>Payable</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr class="tr-hover"><td>1–15 Aug 2026</td><td>₹38,500</td><td>₹3,850</td><td>₹500</td><td>₹34,150</td><td><span class="badge badge-gold">Processing</span></td></tr>
+              <tr class="tr-hover"><td>16–31 Jul 2026</td><td>₹41,200</td><td>₹4,120</td><td>₹0</td><td>₹37,080</td><td><span class="badge badge-sage">Paid</span></td></tr>
+              <tr class="tr-hover"><td>1–15 Jul 2026</td><td>₹35,900</td><td>₹3,590</td><td>₹300</td><td>₹32,010</td><td><span class="badge badge-sage">Paid</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="sd-settings" style="display:none;">
+        <div class="pane-head"><h2>Salon settings</h2></div>
+        <div class="card settings-block">
+          <h3>Business hours</h3>
+          <div class="grid2"><div class="field"><label>Opens</label><input value="10:00 AM"></div><div class="field"><label>Closes</label><input value="9:00 PM"></div></div>
+        </div>
+        <div class="card settings-block">
+          <h3>Booking policy</h3>
+          <div class="field"><label>Auto-confirm bookings</label><div class="pill-toggle"><button class="active">On</button><button>Off</button></div></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VIEW: ADMIN PANEL -->
+<!-- ============================================================ -->
+<div class="view" id="view-admin">
+  <div class="appshell">
+    <aside class="sidebar">
+      <div class="logo"><span class="dot"></span>GlowBook</div>
+      <div class="who">ADMIN · MARKETPLACE OPS</div>
+      <nav class="sidenav" id="adminNav">
+        <button class="active" data-pane="ad-overview" onclick="setAdminPane(this,'ad-overview')"><span class="ic">📊</span>Overview</button>
+        <button data-pane="ad-salons" onclick="setAdminPane(this,'ad-salons')"><span class="ic">🏪</span>Salons</button>
+        <button data-pane="ad-bookings" onclick="setAdminPane(this,'ad-bookings')"><span class="ic">🗂</span>Bookings</button>
+        <button data-pane="ad-commissions" onclick="setAdminPane(this,'ad-commissions')"><span class="ic">💰</span>Commissions</button>
+        <button data-pane="ad-payouts" onclick="setAdminPane(this,'ad-payouts')"><span class="ic">💳</span>Payouts</button>
+        <button data-pane="ad-disputes" onclick="setAdminPane(this,'ad-disputes')"><span class="ic">⚠️</span>Disputes</button>
+        <button data-pane="ad-verification" onclick="setAdminPane(this,'ad-verification')"><span class="ic">✅</span>Verification</button>
+      </nav>
+      <div class="sidebar-foot"><button class="btn btn-outline btn-sm btn-block" style="color:var(--paper);border-color:rgba(251,246,239,.3);" onclick="logout()">Log out</button></div>
+    </aside>
+    <main class="mainpane">
+
+      <section id="ad-overview">
+        <div class="pane-head"><div><h2>Marketplace overview</h2><p>Last 30 days</p></div></div>
+        <div class="kpi-row">
+          <div class="card kpi"><div class="lb">Gross merchandise value</div><div class="val">₹18.6L</div><div class="delta up">↑ 9.2%</div></div>
+          <div class="card kpi"><div class="lb">Total bookings</div><div class="val">2,140</div><div class="delta up">↑ 6.4%</div></div>
+          <div class="card kpi"><div class="lb">Commission earned</div><div class="val">₹1.86L</div><div class="delta up">↑ 9.2%</div></div>
+          <div class="card kpi"><div class="lb">Active salons</div><div class="val">86</div><div class="delta up">↑ 4</div></div>
+        </div>
+        <div class="grid2">
+          <div class="card" style="padding:22px;">
+            <h3 style="font-size:15px;margin-bottom:14px;">Top salons by GMV</h3>
+            <table><tbody id="topSalonsBody"></tbody></table>
+          </div>
+          <div class="card" style="padding:22px;">
+            <h3 style="font-size:15px;margin-bottom:14px;">Needs attention</h3>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--danger-tint);border-radius:10px;"><span style="font-size:13px;">3 salons pending verification</span><button class="btn btn-sm btn-outline" onclick="setAdminPane(document.querySelector('[data-pane=ad-verification]'),'ad-verification')">Review</button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--gold-light);border-radius:10px;"><span style="font-size:13px;">2 open disputes</span><button class="btn btn-sm btn-outline" onclick="setAdminPane(document.querySelector('[data-pane=ad-disputes]'),'ad-disputes')">Review</button></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--sage-tint);border-radius:10px;"><span style="font-size:13px;">Payout cycle closes in 2 days</span><button class="btn btn-sm btn-outline" onclick="setAdminPane(document.querySelector('[data-pane=ad-payouts]'),'ad-payouts')">View</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="ad-salons" style="display:none;">
+        <div class="pane-head"><h2>Salons</h2><button class="btn btn-primary btn-sm">+ Add salon</button></div>
+        <div class="card tblcard">
+          <table>
+            <thead><tr><th>Salon</th><th>City</th><th>Commission</th><th>Bookings (30d)</th><th>Status</th><th></th></tr></thead>
+            <tbody id="adminSalonsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="ad-bookings" style="display:none;">
+        <div class="pane-head"><h2>All bookings</h2></div>
+        <div class="card tblcard">
+          <table>
+            <thead><tr><th>Booking ID</th><th>Customer</th><th>Salon</th><th>Service</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody id="adminBookingsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="ad-commissions" style="display:none;">
+        <div class="pane-head"><h2>Commission rules</h2></div>
+        <div class="card tblcard">
+          <table>
+            <thead><tr><th>Tier</th><th>Salon type</th><th>Rate</th><th>Applies to</th></tr></thead>
+            <tbody>
+              <tr class="tr-hover"><td>Standard</td><td>New partner</td><td>12%</td><td>All bookings</td></tr>
+              <tr class="tr-hover"><td>Growth</td><td>50+ bookings/mo</td><td>10%</td><td>All bookings</td></tr>
+              <tr class="tr-hover"><td>Premium</td><td>Top-rated, 200+ bookings/mo</td><td>8%</td><td>All bookings</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="ad-payouts" style="display:none;">
+        <div class="pane-head"><h2>Payout cycles</h2></div>
+        <div class="card tblcard">
+          <table>
+            <thead><tr><th>Salon</th><th>Cycle</th><th>Gross</th><th>Commission</th><th>Payable</th><th>Status</th><th></th></tr></thead>
+            <tbody id="adminPayoutsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="ad-disputes" style="display:none;">
+        <div class="pane-head"><h2>Disputes</h2></div>
+        <div class="card tblcard">
+          <table>
+            <thead><tr><th>ID</th><th>Booking</th><th>Type</th><th>Raised by</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr class="tr-hover"><td>DP-104</td><td>GB-28402</td><td>Refund request</td><td>Customer</td><td><span class="badge badge-danger">Open</span></td><td><button class="btn btn-sm btn-outline">Resolve</button></td></tr>
+              <tr class="tr-hover"><td>DP-103</td><td>GB-28377</td><td>No-show dispute</td><td>Salon</td><td><span class="badge badge-danger">Open</span></td><td><button class="btn btn-sm btn-outline">Resolve</button></td></tr>
+              <tr class="tr-hover"><td>DP-098</td><td>GB-28210</td><td>Service quality</td><td>Customer</td><td><span class="badge badge-sage">Resolved</span></td><td><button class="btn btn-sm btn-outline" disabled>Resolve</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="ad-verification" style="display:none;">
+        <div class="pane-head"><h2>Verification queue</h2></div>
+        <div class="grid3" id="verificationCards"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Demo role switcher -->
+<div class="demobar">
+  <span>Demo</span>
+  <button onclick="showView('view-home')">Customer site</button>
+  <button onclick="openAuth('customer')">Login</button>
+  <button onclick="showView('view-salon-dash');renderSalonDash();">Salon panel</button>
+  <button onclick="showView('view-admin');renderAdmin();">Admin panel</button>
+</div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const CATS = [
+  {ic:'✂️',lb:'Haircut'},{ic:'🧖',lb:'Facial'},{ic:'💆',lb:'Spa'},
+  {ic:'💅',lb:'Nails'},{ic:'💄',lb:'Makeup'},{ic:'👰',lb:'Bridal'}
+];
+
+const SALONS = [
+  {id:'s1', name:'XYZ Beauty Salon', area:'Airoli, Navi Mumbai', rating:4.8, reviews:342, from:299, distance:0.8,
+    services:[{n:'Haircut',d:30,p:300},{n:'Hair Spa',d:60,p:999},{n:'Facial',d:45,p:799},{n:'Manicure',d:30,p:499},{n:'Pedicure',d:40,p:599},{n:'Bridal Makeup',d:120,p:5999}],
+    staff:['Priya','Neha','Anjali']},
+  {id:'s2', name:'Studio Sage Wellness', area:'Vashi, Navi Mumbai', rating:4.6, reviews:198, from:349, distance:1.4,
+    services:[{n:'Haircut',d:30,p:349},{n:'Deep Tissue Massage',d:60,p:1299},{n:'Facial',d:45,p:849},{n:'Threading',d:15,p:99}],
+    staff:['Kavita','Sameer']},
+  {id:'s3', name:'The Glow Room', area:'Belapur, Navi Mumbai', rating:4.9, reviews:511, from:399, distance:2.1,
+    services:[{n:'Hair Spa',d:60,p:1099},{n:'Bridal Makeup',d:150,p:7999},{n:'Facial',d:45,p:899},{n:'Manicure',d:30,p:549}],
+    staff:['Riya','Sonal','Meher']},
+  {id:'s4', name:'Urban Cuts & Co.', area:'Kharghar, Navi Mumbai', rating:4.4, reviews:120, from:249, distance:3.0,
+    services:[{n:'Haircut',d:25,p:249},{n:'Beard Styling',d:20,p:199},{n:'Hair Color',d:90,p:1599}],
+    staff:['Rahul','Amit']},
+  {id:'s5', name:'Petal & Pearl Spa', area:'Seawoods, Navi Mumbai', rating:4.7, reviews:265, from:449, distance:1.9,
+    services:[{n:'Hair Spa',d:60,p:999},{n:'Aroma Massage',d:60,p:1499},{n:'Facial',d:45,p:949}],
+    staff:['Divya','Pooja']},
+  {id:'s6', name:'Mirror Mirror Salon', area:'Nerul, Navi Mumbai', rating:4.5, reviews:167, from:279, distance:2.6,
+    services:[{n:'Haircut',d:30,p:279},{n:'Nail Art',d:45,p:699},{n:'Facial',d:40,p:749}],
+    staff:['Ishita','Naina']}
+];
+
+let bookings = [
+  {id:'GB-28473', salon:'XYZ Beauty Salon', service:'Hair Spa', staff:'Anjali', date:'15 Aug 2026', time:'4:00 PM', amount:999, status:'upcoming', customer:'Ashutosh Rao'},
+  {id:'GB-28402', salon:'XYZ Beauty Salon', service:'Facial', staff:'Neha', date:'2 Aug 2026', time:'11:30 AM', amount:799, status:'completed', customer:'Ritika Shah'},
+  {id:'GB-28377', salon:'Studio Sage Wellness', service:'Deep Tissue Massage', staff:'Kavita', date:'28 Jul 2026', time:'2:00 PM', amount:1299, status:'completed', customer:'Ashutosh Rao'}
+];
+
+const TODAY_QUEUE = [
+  {time:'10:00', svc:'Haircut', staff:'Priya', cust:'Rohan Mehta', status:'checked-in'},
+  {time:'11:30', svc:'Facial', staff:'Neha', cust:'Sana Iqbal', status:'upcoming'},
+  {time:'14:00', svc:'Hair Spa', staff:'Anjali', cust:'Devika Rao', status:'upcoming'},
+  {time:'16:00', svc:'Hair Spa', staff:'Anjali', cust:'Ashutosh Rao', status:'upcoming'}
+];
+
+const AD_SALONS = [
+  {name:'XYZ Beauty Salon', city:'Navi Mumbai', comm:'10%', bookings:214, status:'Active'},
+  {name:'Studio Sage Wellness', city:'Navi Mumbai', comm:'12%', bookings:96, status:'Active'},
+  {name:'The Glow Room', city:'Navi Mumbai', comm:'8%', bookings:340, status:'Active'},
+  {name:'Urban Cuts & Co.', city:'Navi Mumbai', comm:'12%', bookings:41, status:'Active'},
+  {name:'Blush & Bloom', city:'Pune', comm:'12%', bookings:0, status:'Pending review'},
+  {name:'Serene Skin Studio', city:'Mumbai', comm:'12%', bookings:0, status:'Pending review'}
+];
+
+/* ============================================================
+   VIEW ROUTING
+   ============================================================ */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+/* ============================================================
+   HOME
+   ============================================================ */
+function renderHeroSlots(){
+  const grid = document.getElementById('heroSlotGrid');
+  const hours = ['10:00','11:00','12:00','01:00','02:00','03:00','04:00','05:00'];
+  const takenIdx = [1,2,6];
+  const pickIdx = 4;
+  grid.innerHTML = hours.map((h,i)=>{
+    let cls = 'open';
+    if(takenIdx.includes(i)) cls='taken';
+    if(i===pickIdx) cls='pick';
+    return `<div class="slotcell ${cls}">${h}</div>`;
+  }).join('');
+}
+function renderCats(){
+  document.getElementById('catRow').innerHTML = CATS.map(c=>`<div class="cat-card" onclick="quickSearch('${c.lb}')"><div class="ic">${c.ic}</div><div class="lb">${c.lb}</div></div>`).join('');
+}
+function salonCard(s){
+  return `<div class="card salon-card" onclick="openSalon('${s.id}')">
+    <div class="salon-img">${s.name}<span class="fav">♡</span></div>
+    <div class="salon-body">
+      <div class="row1"><div class="name">${s.name}</div><div class="rating">⭐ ${s.rating}</div></div>
+      <div class="meta">📍 ${s.area} · ${s.distance} km</div>
+      <div class="price">From ₹${s.from}</div>
+    </div>
+  </div>`;
+}
+function renderHomeSalons(){
+  document.getElementById('homeSalonGrid').innerHTML = SALONS.slice(0,3).map(salonCard).join('');
+}
+function quickSearch(term){ document.getElementById('searchPageInput') && (document.getElementById('searchPageInput').value = term); showView('view-search'); runSearch(term); }
+function doHomeSearch(){ const v = document.getElementById('homeSearchInput').value; quickSearch(v); }
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+let currentSort = 'rating';
+function runSearch(term){
+  term = term || document.getElementById('searchPageInput').value || '';
+  document.getElementById('searchResultsTitle').textContent = term ? `Results for "${term}"` : 'All salons';
+  renderSearchGrid();
+}
+function setSort(btn, key){
+  document.querySelectorAll('.pill-toggle button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); currentSort = key; renderSearchGrid();
+}
+function renderSearchGrid(){
+  let list = [...SALONS];
+  if(currentSort==='rating') list.sort((a,b)=>b.rating-a.rating);
+  if(currentSort==='price') list.sort((a,b)=>a.from-b.from);
+  if(currentSort==='distance') list.sort((a,b)=>a.distance-b.distance);
+  document.getElementById('searchGrid').innerHTML = list.map(salonCard).join('');
+}
+
+/* ============================================================
+   SALON PROFILE
+   ============================================================ */
+let activeSalonId = 's1';
+function openSalon(id){
+  activeSalonId = id;
+  const s = SALONS.find(x=>x.id===id);
+  document.getElementById('profileHero').textContent = s.name;
+  document.getElementById('profileName').textContent = s.name;
+  document.getElementById('profileRating').textContent = `⭐ ${s.rating} (${s.reviews} reviews)`;
+  document.getElementById('profileLoc').textContent = `📍 ${s.area}`;
+  document.getElementById('profileServices').innerHTML = s.services.map(sv=>`
+    <div class="svc-pick" onclick="startBooking('${sv.n}')">
+      <div class="l"><h4>${sv.n}</h4><p>${sv.d} minutes</p></div>
+      <div class="r">₹${sv.p} <button class="btn btn-sm btn-outline" style="margin-left:10px;">Book</button></div>
+    </div>`).join('');
+  document.getElementById('profileReviews').innerHTML = `
+    <div class="loop-item"><div class="loop-num">★★★★★</div><div><h3>Ritika S.</h3><p>Great hair spa, Anjali is fantastic. Clean and on time.</p></div></div>
+    <div class="loop-item"><div class="loop-num">★★★★☆</div><div><h3>Devika R.</h3><p>Good facial, slightly delayed start but worth it.</p></div></div>`;
+  showView('view-salon-profile');
+}
+function setProfileTab(btn, tab){
+  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['services','reviews','about'].forEach(t=>document.getElementById('profile'+t.charAt(0).toUpperCase()+t.slice(1)).style.display = (t===tab?'block':'none'));
+}
+
+/* ============================================================
+   BOOKING WIZARD
+   ============================================================ */
+const wizSteps = ['service','staff','time','details','payment'];
+let wizIndex = 0;
+let cart = {};
+function startBooking(serviceName){
+  const s = SALONS.find(x=>x.id===activeSalonId);
+  cart = {salonId:s.id, salonName:s.name, service:serviceName||null, staff:null, date:null, time:null};
+  wizIndex = 0;
+  renderWizSteps();
+  renderWizServiceStep();
+  if(serviceName){ cart.service = serviceName; wizIndex=1; }
+  showWizStep();
+  showView('view-booking');
+}
+function renderWizSteps(){
+  document.getElementById('wizSteps').innerHTML = wizSteps.map((s,i)=>{
+    const cls = i<wizIndex?'done':(i===wizIndex?'now':'');
+    const labels = {service:'Service',staff:'Stylist',time:'Date & time',details:'Details',payment:'Payment'};
+    return `<div class="step ${cls}"><div class="dot">${i<wizIndex?'✓':i+1}</div><div class="lb">${labels[s]}</div></div>`;
+  }).join('');
+}
+function renderWizServiceStep(){
+  const s = SALONS.find(x=>x.id===cart.salonId);
+  document.getElementById('wizServiceList').innerHTML = s.services.map(sv=>`
+    <div class="svc-pick ${cart.service===sv.n?'sel':''}" onclick="pickService('${sv.n}',${sv.p},${sv.d})">
+      <div class="l"><h4>${sv.n}</h4><p>${sv.d} minutes</p></div><div class="r">₹${sv.p}</div>
+    </div>`).join('');
+}
+function pickService(n,p,d){ cart.service=n; cart.price=p; cart.duration=d; renderWizServiceStep(); }
+function renderWizStaffStep(){
+  const s = SALONS.find(x=>x.id===cart.salonId);
+  let html = `<div class="staff-pick ${cart.staff==='Any available'?'sel':''}" onclick="pickStaff('Any available')"><div class="av">✦</div><p>Any available</p></div>`;
+  html += s.staff.map(name=>`<div class="staff-pick ${cart.staff===name?'sel':''}" onclick="pickStaff('${name}')"><div class="av">${name[0]}</div><p>${name}</p></div>`).join('');
+  document.getElementById('wizStaffList').innerHTML = html;
+}
+function pickStaff(name){ cart.staff=name; renderWizStaffStep(); }
+function renderWizTimeStep(){
+  const days=[]; const base=new Date(2026,7,11);
+  for(let i=0;i<6;i++){ const d=new Date(base); d.setDate(base.getDate()+i); days.push(d); }
+  document.getElementById('wizDateGrid').innerHTML = days.map((d,i)=>{
+    const label = d.toLocaleDateString('en-US',{weekday:'short'});
+    const num = d.getDate();
+    const key = `${num} ${d.toLocaleDateString('en-US',{month:'short'})}`;
+    return `<div class="datecell ${cart.date===key?'sel':''}" onclick="pickDate('${key}')"><div class="d">${label}</div><div class="n">${num}</div></div>`;
+  }).join('');
+  const hours = ['10:00 AM','11:00 AM','12:00 PM','01:00 PM','02:00 PM','03:00 PM','04:00 PM','05:00 PM','06:00 PM','07:00 PM','08:00 PM'];
+  const taken = ['11:00 AM','12:00 PM','06:00 PM'];
+  document.getElementById('wizTimeGrid').innerHTML = hours.map(h=>{
+    if(taken.includes(h)) return `<div class="timecell taken">${h}</div>`;
+    return `<div class="timecell ${cart.time===h?'sel':''}" onclick="pickTime('${h}')">${h}</div>`;
+  }).join('');
+}
+function pickDate(k){ cart.date=k; renderWizTimeStep(); }
+function pickTime(t){ cart.time=t; renderWizTimeStep(); }
+function renderWizDetailsStep(){
+  document.getElementById('wizSummary').innerHTML = `
+    <div class="summary-row"><span>${cart.service}</span><span>₹${cart.price||''}</span></div>
+    <div class="summary-row"><span>Stylist</span><span>${cart.staff||'Any available'}</span></div>
+    <div class="summary-row"><span>When</span><span>${cart.date||''}, ${cart.time||''}</span></div>`;
+}
+function renderWizPaymentStep(){
+  const fee = 20;
+  document.getElementById('wizPaySummary').innerHTML = `
+    <div class="summary-row"><span>${cart.service}</span><span>₹${cart.price}</span></div>
+    <div class="summary-row"><span>Platform fee</span><span>₹${fee}</span></div>
+    <div class="summary-row total"><span>Total</span><span>₹${cart.price+fee}</span></div>`;
+}
+function showWizStep(){
+  renderWizSteps();
+  wizSteps.forEach((s,i)=>document.getElementById('wizStep-'+s).style.display = i===wizIndex?'block':'none');
+  document.getElementById('wizBackBtn').style.visibility = wizIndex===0?'hidden':'visible';
+  document.getElementById('wizNextBtn').textContent = wizIndex===wizSteps.length-1 ? 'Pay & confirm →' : 'Continue →';
+  if(wizSteps[wizIndex]==='service') renderWizServiceStep();
+  if(wizSteps[wizIndex]==='staff') renderWizStaffStep();
+  if(wizSteps[wizIndex]==='time') renderWizTimeStep();
+  if(wizSteps[wizIndex]==='details') renderWizDetailsStep();
+  if(wizSteps[wizIndex]==='payment') renderWizPaymentStep();
+}
+function wizNext(){
+  const step = wizSteps[wizIndex];
+  if(step==='service' && !cart.service){ alert('Please select a service to continue.'); return; }
+  if(step==='time' && (!cart.date || !cart.time)){ alert('Please pick a date and time.'); return; }
+  if(step==='details'){
+    const name=document.getElementById('custName').value.trim();
+    const mob=document.getElementById('custMobile').value.trim();
+    if(!name||!mob){ alert('Please enter your name and mobile number.'); return; }
+    cart.customerName=name; cart.customerMobile=mob;
+  }
+  if(step==='payment'){ confirmBooking(); return; }
+  wizIndex++; showWizStep();
+}
+function wizBack(){ if(wizIndex>0){ wizIndex--; showWizStep(); } }
+function confirmBooking(){
+  const id = 'GB-'+Math.floor(20000+Math.random()*9999);
+  bookings.unshift({id, salon:cart.salonName, service:cart.service, staff:cart.staff||'Any available', date:cart.date+' 2026', time:cart.time, amount:cart.price, status:'upcoming', customer:cart.customerName||'You'});
+  document.getElementById('confSalon').textContent = cart.salonName;
+  document.getElementById('confId').textContent = id;
+  document.getElementById('confDetails').innerHTML = `
+    <div class="summary-row"><span>Service</span><span>${cart.service}</span></div>
+    <div class="summary-row"><span>Stylist</span><span>${cart.staff||'Any available'}</span></div>
+    <div class="summary-row"><span>When</span><span>${cart.date}, ${cart.time}</span></div>
+    <div class="summary-row total"><span>Paid</span><span>₹${cart.price+20}</span></div>`;
+  showView('view-confirmation');
+}
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+let authRole = 'customer';
+function openAuth(role){ setAuthRole(role); document.getElementById('authStep1').style.display='block'; document.getElementById('authStep2').style.display='none'; showView('view-login'); }
+function setAuthRole(role){
+  authRole = role;
+  ['customer','salon','admin'].forEach(r=>document.getElementById('tab-'+r).classList.toggle('active', r===role));
+  const cfg = {
+    customer:{title:'Log in as a customer', sub:'Enter your mobile number to receive an OTP.', label:'Mobile number', ph:'98XXXXXX21'},
+    salon:{title:'Salon partner login', sub:'Enter your registered mobile number or email.', label:'Mobile or email', ph:'owner@xyzsalon.com'},
+    admin:{title:'Admin sign in', sub:'Restricted access — GlowBook staff only.', label:'Work email', ph:'you@glowbook.com'}
+  }[role];
+  document.getElementById('authTitle').textContent = cfg.title;
+  document.getElementById('authSub').textContent = cfg.sub;
+  document.getElementById('authFieldLabel').textContent = cfg.label;
+  document.getElementById('authIdentifier').placeholder = cfg.ph;
+}
+function sendOtp(){
+  const val = document.getElementById('authIdentifier').value.trim();
+  document.getElementById('otpSentTo').textContent = val ? `Sent a 4-digit code to ${val}.` : `Sent a 4-digit code.`;
+  document.getElementById('authStep1').style.display='none';
+  document.getElementById('authStep2').style.display='block';
+}
+function backToStep1(){ document.getElementById('authStep1').style.display='block'; document.getElementById('authStep2').style.display='none'; }
+function verifyOtp(){
+  if(authRole==='customer'){ showView('view-customer-dash'); renderCustomerDash(); }
+  else if(authRole==='salon'){ showView('view-salon-dash'); renderSalonDash(); }
+  else { showView('view-admin'); renderAdmin(); }
+}
+function logout(){ showView('view-home'); }
+
+/* ============================================================
+   CUSTOMER DASHBOARD
+   ============================================================ */
+function renderCustomerDash(filter){
+  filter = filter || 'upcoming';
+  const list = bookings.filter(b=> filter==='upcoming' ? b.status==='upcoming' : b.status==='completed');
+  document.getElementById('myBookingsList').innerHTML = list.length ? list.map(b=>`
+    <div class="card" style="padding:18px 22px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-weight:600;font-size:14.5px;">${b.service} · ${b.salon}</div>
+        <div style="font-size:12.5px;color:var(--muted);margin-top:4px;">${b.date} · ${b.time} · ${b.staff}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span class="badge ${b.status==='upcoming'?'badge-gold':'badge-sage'}">${b.status==='upcoming'?'Upcoming':'Completed'}</span>
+        <span class="badge badge-muted" style="font-family:var(--font-mono);">${b.id}</span>
+      </div>
+    </div>`).join('') : `<p style="color:var(--muted);font-size:14px;padding:30px 0;">No ${filter} bookings yet.</p>`;
+}
+function setMyBookingsTab(btn, tab){
+  document.querySelectorAll('#view-customer-dash .tabbar button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); renderCustomerDash(tab);
+}
+
+/* ============================================================
+   SALON DASHBOARD
+   ============================================================ */
+function renderSalonDash(){
+  document.getElementById('todayList').innerHTML = TODAY_QUEUE.map(t=>`
+    <div class="today-item" style="border-bottom:1px solid var(--line);">
+      <div class="time">${t.time}</div>
+      <div class="info"><div class="svc">${t.svc} — ${t.cust}</div><div class="sub">Stylist: ${t.staff}</div></div>
+      <div class="actions">
+        ${t.status==='checked-in'
+          ? `<span class="badge badge-sage">Checked in</span><button class="btn btn-sm btn-primary">Complete</button>`
+          : `<button class="btn btn-sm btn-outline">Check in</button>`}
+      </div>
+    </div>`).join('');
+
+  document.getElementById('allBookingsBody').innerHTML = bookings.map(b=>`
+    <tr class="tr-hover"><td style="font-family:var(--font-mono);">${b.id}</td><td>${b.customer}</td><td>${b.service}</td><td>${b.staff}</td><td>${b.date}</td><td>₹${b.amount}</td>
+    <td><span class="badge ${b.status==='upcoming'?'badge-gold':'badge-sage'}">${b.status}</span></td></tr>`).join('');
+
+  const svc = SALONS[0].services;
+  document.getElementById('servicesBody').innerHTML = svc.map(s=>`
+    <tr class="tr-hover"><td>${s.n}</td><td>${s.d} min</td><td>₹${s.p}</td><td><span class="badge badge-sage">Active</span></td><td><button class="btn btn-sm btn-ghost">Edit</button></td></tr>`).join('');
+
+  document.getElementById('staffCards').innerHTML = SALONS[0].staff.map(n=>`
+    <div class="card" style="padding:20px;text-align:center;">
+      <div class="avatar" style="width:44px;height:44px;font-size:14px;margin:0 auto 10px;">${n[0]}</div>
+      <div style="font-weight:600;font-size:14.5px;">${n}</div>
+      <div style="font-size:12px;color:var(--muted);margin:4px 0 12px;">Stylist · 4.9 ⭐</div>
+      <span class="badge badge-sage">Available today</span>
+    </div>`).join('');
+}
+function setSalonPane(btn, id){
+  document.querySelectorAll('#salonNav button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['sd-today','sd-bookings','sd-services','sd-staff','sd-payouts','sd-settings'].forEach(s=>document.getElementById(s).style.display = s===id?'block':'none');
+}
+
+/* ============================================================
+   ADMIN PANEL
+   ============================================================ */
+function renderAdmin(){
+  document.getElementById('adminSalonsBody').innerHTML = AD_SALONS.map(s=>`
+    <tr class="tr-hover">
+      <td style="display:flex;align-items:center;gap:10px;"><span class="avatar">${s.name[0]}</span>${s.name}</td>
+      <td>${s.city}</td><td>${s.comm}</td><td>${s.bookings}</td>
+      <td><span class="badge ${s.status==='Active'?'badge-sage':'badge-gold'}">${s.status}</span></td>
+      <td>${s.status==='Pending review' ? `<button class="btn btn-sm btn-primary">Verify</button>` : `<button class="btn btn-sm btn-ghost">Manage</button>`}</td>
+    </tr>`).join('');
+
+  document.getElementById('topSalonsBody').innerHTML = [...AD_SALONS].sort((a,b)=>b.bookings-a.bookings).slice(0,4).map(s=>`
+    <tr><td style="padding:9px 0;font-size:13px;">${s.name}</td><td style="padding:9px 0;text-align:right;font-family:var(--font-mono);font-size:12.5px;color:var(--muted);">${s.bookings} bookings</td></tr>`).join('');
+
+  document.getElementById('adminBookingsBody').innerHTML = bookings.map(b=>`
+    <tr class="tr-hover"><td style="font-family:var(--font-mono);">${b.id}</td><td>${b.customer}</td><td>${b.salon}</td><td>${b.service}</td><td>₹${b.amount}</td>
+    <td><span class="badge ${b.status==='upcoming'?'badge-gold':'badge-sage'}">${b.status}</span></td></tr>`).join('');
+
+  document.getElementById('adminPayoutsBody').innerHTML = AD_SALONS.filter(s=>s.status==='Active').map(s=>{
+    const gross = s.bookings*450;
+    const commRate = parseInt(s.comm)/100;
+    const comm = Math.round(gross*commRate);
+    return `<tr class="tr-hover"><td>${s.name}</td><td>1–15 Aug</td><td>₹${gross.toLocaleString()}</td><td>₹${comm.toLocaleString()}</td><td>₹${(gross-comm).toLocaleString()}</td><td><span class="badge badge-gold">Processing</span></td><td><button class="btn btn-sm btn-outline">Release</button></td></tr>`;
+  }).join('');
+
+  document.getElementById('verificationCards').innerHTML = AD_SALONS.filter(s=>s.status==='Pending review').map(s=>`
+    <div class="card" style="padding:20px;">
+      <div style="font-weight:600;font-size:14.5px;margin-bottom:4px;">${s.name}</div>
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;">${s.city} · Applied 3 days ago</div>
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px;">Documents: GST ✓ · License ✓ · Address proof ⏳</div>
+      <div style="display:flex;gap:8px;"><button class="btn btn-sm btn-primary" style="flex:1;">Approve</button><button class="btn btn-sm btn-outline" style="flex:1;">Reject</button></div>
+    </div>`).join('') || `<p style="color:var(--muted);font-size:14px;">No salons pending verification.</p>`;
+}
+function setAdminPane(btn, id){
+  document.querySelectorAll('#adminNav button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['ad-overview','ad-salons','ad-bookings','ad-commissions','ad-payouts','ad-disputes','ad-verification'].forEach(s=>document.getElementById(s).style.display = s===id?'block':'none');
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderHeroSlots();
+renderCats();
+renderHomeSalons();
+renderSearchGrid();
+</script>
+</body>
+</html>
